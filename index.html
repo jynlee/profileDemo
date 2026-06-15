@@ -1,0 +1,1321 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Your Name | Frontend Developer</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    /* ──────────────────────────────────────────
+       TOKENS
+    ────────────────────────────────────────── */
+    :root {
+      --bg:          #0A0A0F;
+      --bg-card:     #111118;
+      --bg-hover:    #16161F;
+      --border:      #2A2A4A;
+      --accent:      #4F6EF7;
+      --accent-dim:  rgba(79, 110, 247, 0.15);
+      --accent-glow: rgba(79, 110, 247, 0.35);
+      --text-primary:   #EAEAF0;
+      --text-secondary: #8888A8;
+      --text-muted:     #4A4A6A;
+
+      --font-display: 'Space Grotesk', sans-serif;
+      --font-body:    'Inter', sans-serif;
+
+      --radius: 12px;
+      --radius-sm: 6px;
+      --transition: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    /* ──────────────────────────────────────────
+       RESET & BASE
+    ────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text-primary);
+      font-family: var(--font-body);
+      font-size: 16px;
+      line-height: 1.7;
+      overflow-x: hidden;
+    }
+
+    a { color: inherit; text-decoration: none; }
+    img { display: block; width: 100%; object-fit: cover; }
+    ul { list-style: none; }
+
+    /* ──────────────────────────────────────────
+       SCROLLBAR
+    ────────────────────────────────────────── */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: var(--bg); }
+    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+    /* ──────────────────────────────────────────
+       LAYOUT HELPERS
+    ────────────────────────────────────────── */
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    section { padding: 100px 0; }
+
+    .section-label {
+      font-family: var(--font-display);
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 16px;
+    }
+
+    .section-title {
+      font-family: var(--font-display);
+      font-size: clamp(28px, 4vw, 40px);
+      font-weight: 700;
+      line-height: 1.2;
+      color: var(--text-primary);
+      margin-bottom: 48px;
+    }
+
+    /* ──────────────────────────────────────────
+       NAV
+    ────────────────────────────────────────── */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      padding: 20px 0;
+      transition: background var(--transition), backdrop-filter var(--transition);
+    }
+    nav.scrolled {
+      background: rgba(10, 10, 15, 0.85);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .nav-logo {
+      font-family: var(--font-display);
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--text-primary);
+      letter-spacing: -0.02em;
+    }
+    .nav-logo span { color: var(--accent); }
+
+    .nav-links {
+      display: flex;
+      gap: 36px;
+    }
+    .nav-links a {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text-secondary);
+      transition: color var(--transition);
+      position: relative;
+    }
+    .nav-links a::after {
+      content: '';
+      position: absolute;
+      bottom: -4px; left: 0;
+      width: 0; height: 1px;
+      background: var(--accent);
+      transition: width var(--transition);
+    }
+    .nav-links a:hover { color: var(--text-primary); }
+    .nav-links a:hover::after { width: 100%; }
+
+    .nav-cta {
+      font-size: 13px;
+      font-weight: 600;
+      padding: 9px 20px;
+      border: 1px solid var(--accent);
+      border-radius: var(--radius-sm);
+      color: var(--accent);
+      transition: background var(--transition), color var(--transition);
+    }
+    .nav-cta:hover {
+      background: var(--accent);
+      color: #fff;
+    }
+
+    /* ──────────────────────────────────────────
+       HERO
+    ────────────────────────────────────────── */
+    #hero {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      padding-top: 80px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* subtle grid bg */
+    #hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(var(--border) 1px, transparent 1px),
+        linear-gradient(90deg, var(--border) 1px, transparent 1px);
+      background-size: 60px 60px;
+      opacity: 0.25;
+      pointer-events: none;
+    }
+    /* radial fade over grid */
+    #hero::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse 70% 60% at 50% 50%, transparent 0%, var(--bg) 75%);
+      pointer-events: none;
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 1;
+      max-width: 720px;
+    }
+
+    .hero-eyebrow {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-secondary);
+      letter-spacing: 0.05em;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .hero-eyebrow::before {
+      content: '';
+      display: inline-block;
+      width: 32px; height: 1px;
+      background: var(--accent);
+    }
+
+    .hero-title {
+      font-family: var(--font-display);
+      font-size: clamp(44px, 7vw, 80px);
+      font-weight: 700;
+      line-height: 1.05;
+      letter-spacing: -0.03em;
+      margin-bottom: 24px;
+    }
+    .hero-title .name {
+      color: var(--text-primary);
+    }
+    .hero-title .role {
+      color: var(--text-secondary);
+      font-weight: 300;
+    }
+    /* cursor blink — signature element */
+    .cursor {
+      display: inline-block;
+      width: 3px;
+      height: 0.85em;
+      background: var(--accent);
+      margin-left: 4px;
+      vertical-align: middle;
+      animation: blink 1s step-end infinite;
+    }
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50%       { opacity: 0; }
+    }
+
+    .hero-desc {
+      font-size: 17px;
+      color: var(--text-secondary);
+      max-width: 480px;
+      line-height: 1.75;
+      margin-bottom: 40px;
+    }
+
+    .hero-actions {
+      display: flex;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 14px 28px;
+      background: var(--accent);
+      color: #fff;
+      font-family: var(--font-display);
+      font-size: 14px;
+      font-weight: 600;
+      border-radius: var(--radius-sm);
+      transition: opacity var(--transition), transform var(--transition), box-shadow var(--transition);
+    }
+    .btn-primary:hover {
+      opacity: 0.88;
+      transform: translateY(-1px);
+      box-shadow: 0 8px 24px var(--accent-glow);
+    }
+    .btn-secondary {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 14px 28px;
+      border: 1px solid var(--border);
+      color: var(--text-secondary);
+      font-family: var(--font-display);
+      font-size: 14px;
+      font-weight: 600;
+      border-radius: var(--radius-sm);
+      transition: border-color var(--transition), color var(--transition);
+    }
+    .btn-secondary:hover {
+      border-color: var(--accent);
+      color: var(--text-primary);
+    }
+
+    /* scroll indicator */
+    .scroll-hint {
+      position: absolute;
+      bottom: 40px; left: 50%;
+      transform: translateX(-50%);
+      z-index: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      color: var(--text-muted);
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+    .scroll-line {
+      width: 1px;
+      height: 40px;
+      background: linear-gradient(to bottom, var(--accent), transparent);
+      animation: scrollPulse 2s ease-in-out infinite;
+    }
+    @keyframes scrollPulse {
+      0%, 100% { opacity: 0.3; }
+      50%       { opacity: 1; }
+    }
+
+    /* ──────────────────────────────────────────
+       ABOUT
+    ────────────────────────────────────────── */
+    #about { border-top: 1px solid var(--border); }
+
+    .about-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 80px;
+      align-items: center;
+    }
+
+    .about-photo-wrap {
+      position: relative;
+    }
+    .about-photo {
+      width: 100%;
+      aspect-ratio: 4/5;
+      border-radius: var(--radius);
+      overflow: hidden;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+    }
+    .about-photo img {
+      width: 100%; height: 100%;
+      object-fit: cover;
+      opacity: 0.85;
+    }
+    .photo-placeholder {
+      width: 100%; height: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      color: var(--text-muted);
+      font-size: 13px;
+    }
+    .photo-placeholder svg {
+      width: 48px; height: 48px;
+      opacity: 0.4;
+    }
+    /* decorative corner accent */
+    .about-photo-wrap::before {
+      content: '';
+      position: absolute;
+      top: -12px; left: -12px;
+      width: 80px; height: 80px;
+      border-top: 2px solid var(--accent);
+      border-left: 2px solid var(--accent);
+      border-radius: 4px 0 0 0;
+    }
+    .about-photo-wrap::after {
+      content: '';
+      position: absolute;
+      bottom: -12px; right: -12px;
+      width: 80px; height: 80px;
+      border-bottom: 2px solid var(--accent);
+      border-right: 2px solid var(--accent);
+      border-radius: 0 0 4px 0;
+    }
+
+    .about-text .section-title { margin-bottom: 20px; }
+
+    .about-desc {
+      color: var(--text-secondary);
+      font-size: 15px;
+      line-height: 1.8;
+      margin-bottom: 32px;
+    }
+
+    .about-stats {
+      display: flex;
+      gap: 32px;
+      margin-bottom: 32px;
+      padding: 24px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+    }
+    .stat {
+      text-align: center;
+      flex: 1;
+    }
+    .stat-num {
+      font-family: var(--font-display);
+      font-size: 28px;
+      font-weight: 700;
+      color: var(--accent);
+    }
+    .stat-label {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+    .stat + .stat {
+      border-left: 1px solid var(--border);
+    }
+
+    .about-links {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .link-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 16px;
+      border: 1px solid var(--border);
+      border-radius: 99px;
+      font-size: 13px;
+      color: var(--text-secondary);
+      transition: all var(--transition);
+    }
+    .link-chip svg { width: 14px; height: 14px; }
+    .link-chip:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+      background: var(--accent-dim);
+    }
+
+    /* ──────────────────────────────────────────
+       SKILLS
+    ────────────────────────────────────────── */
+    #skills { border-top: 1px solid var(--border); }
+
+    .skills-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 32px;
+    }
+
+    .skill-group h3 {
+      font-family: var(--font-display);
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-muted);
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      margin-bottom: 20px;
+    }
+
+    .skill-item {
+      margin-bottom: 18px;
+    }
+    .skill-meta {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 7px;
+    }
+    .skill-name {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text-primary);
+    }
+    .skill-pct {
+      font-size: 12px;
+      color: var(--accent);
+      font-weight: 600;
+    }
+    .skill-bar {
+      height: 4px;
+      background: var(--border);
+      border-radius: 2px;
+      overflow: hidden;
+    }
+    .skill-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--accent), #7B9FFF);
+      border-radius: 2px;
+      width: 0;
+      transition: width 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    /* tag badges for tech */
+    .tech-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 8px;
+    }
+    .tag {
+      padding: 5px 12px;
+      border: 1px solid var(--border);
+      border-radius: 99px;
+      font-size: 12px;
+      color: var(--text-secondary);
+      font-weight: 500;
+      transition: all var(--transition);
+    }
+    .tag:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+      background: var(--accent-dim);
+    }
+
+    /* ──────────────────────────────────────────
+       PORTFOLIO
+    ────────────────────────────────────────── */
+    #portfolio { border-top: 1px solid var(--border); }
+
+    .portfolio-header {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      margin-bottom: 48px;
+    }
+    .portfolio-header .section-title { margin-bottom: 0; }
+
+    .portfolio-filter {
+      display: flex;
+      gap: 8px;
+    }
+    .filter-btn {
+      padding: 7px 16px;
+      border: 1px solid var(--border);
+      border-radius: 99px;
+      font-size: 13px;
+      color: var(--text-secondary);
+      background: transparent;
+      cursor: pointer;
+      transition: all var(--transition);
+      font-family: var(--font-body);
+    }
+    .filter-btn:hover,
+    .filter-btn.active {
+      border-color: var(--accent);
+      color: var(--accent);
+      background: var(--accent-dim);
+    }
+
+    .portfolio-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 24px;
+    }
+
+    /* ── CARD ── */
+    .card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      transition: transform var(--transition), border-color var(--transition), box-shadow var(--transition);
+      display: flex;
+      flex-direction: column;
+    }
+    .card:hover {
+      transform: translateY(-4px);
+      border-color: var(--accent);
+      box-shadow: 0 12px 40px rgba(0,0,0,0.4), 0 0 0 1px var(--accent-dim);
+    }
+
+    .card-thumb {
+      width: 100%;
+      aspect-ratio: 16/9;
+      background: var(--bg-hover);
+      position: relative;
+      overflow: hidden;
+    }
+    .card-thumb img {
+      width: 100%; height: 100%;
+      object-fit: cover;
+      transition: transform 0.4s ease;
+    }
+    .card:hover .card-thumb img { transform: scale(1.04); }
+
+    .thumb-placeholder {
+      width: 100%; height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-muted);
+      font-size: 12px;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .thumb-placeholder svg { width: 32px; height: 32px; opacity: 0.3; }
+
+    .card-overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(10, 10, 15, 0.75);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      opacity: 0;
+      transition: opacity var(--transition);
+    }
+    .card:hover .card-overlay { opacity: 1; }
+
+    .overlay-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 9px 18px;
+      border-radius: var(--radius-sm);
+      font-size: 13px;
+      font-weight: 600;
+      transition: all var(--transition);
+    }
+    .overlay-btn.primary {
+      background: var(--accent);
+      color: #fff;
+    }
+    .overlay-btn.secondary {
+      border: 1px solid rgba(255,255,255,0.3);
+      color: #fff;
+    }
+    .overlay-btn:hover { opacity: 0.85; transform: scale(1.04); }
+
+    .card-body {
+      padding: 22px 24px 24px;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .card-category {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 8px;
+    }
+
+    .card-title {
+      font-family: var(--font-display);
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 10px;
+      line-height: 1.3;
+    }
+
+    .card-desc {
+      font-size: 14px;
+      color: var(--text-secondary);
+      line-height: 1.65;
+      flex: 1;
+      margin-bottom: 16px;
+    }
+
+    .card-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+    .card-tag {
+      padding: 3px 10px;
+      background: var(--accent-dim);
+      border: 1px solid rgba(79, 110, 247, 0.25);
+      border-radius: 99px;
+      font-size: 11px;
+      color: var(--accent);
+      font-weight: 500;
+    }
+
+    /* ──────────────────────────────────────────
+       EXPERIENCE / TIMELINE
+    ────────────────────────────────────────── */
+    #experience { border-top: 1px solid var(--border); }
+
+    .timeline {
+      position: relative;
+      padding-left: 32px;
+    }
+    .timeline::before {
+      content: '';
+      position: absolute;
+      left: 0; top: 8px; bottom: 0;
+      width: 1px;
+      background: linear-gradient(to bottom, var(--accent), transparent);
+    }
+
+    .timeline-item {
+      position: relative;
+      padding-bottom: 44px;
+    }
+    .timeline-item::before {
+      content: '';
+      position: absolute;
+      left: -36px; top: 6px;
+      width: 9px; height: 9px;
+      border-radius: 50%;
+      background: var(--accent);
+      border: 2px solid var(--bg);
+      box-shadow: 0 0 0 3px var(--accent-dim);
+    }
+
+    .timeline-date {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--accent);
+      letter-spacing: 0.06em;
+      margin-bottom: 6px;
+    }
+    .timeline-role {
+      font-family: var(--font-display);
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 4px;
+    }
+    .timeline-company {
+      font-size: 14px;
+      color: var(--text-secondary);
+      margin-bottom: 12px;
+    }
+    .timeline-desc {
+      font-size: 14px;
+      color: var(--text-secondary);
+      line-height: 1.75;
+    }
+
+    /* ──────────────────────────────────────────
+       CONTACT
+    ────────────────────────────────────────── */
+    #contact {
+      border-top: 1px solid var(--border);
+      text-align: center;
+    }
+
+    .contact-inner {
+      max-width: 560px;
+      margin: 0 auto;
+    }
+
+    .contact-inner .section-title { margin-bottom: 16px; }
+
+    .contact-desc {
+      color: var(--text-secondary);
+      font-size: 16px;
+      line-height: 1.75;
+      margin-bottom: 40px;
+    }
+
+    .contact-actions {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 56px;
+    }
+
+    .social-row {
+      display: flex;
+      justify-content: center;
+      gap: 16px;
+    }
+    .social-link {
+      width: 44px; height: 44px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      color: var(--text-secondary);
+      transition: all var(--transition);
+    }
+    .social-link svg { width: 18px; height: 18px; }
+    .social-link:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+      background: var(--accent-dim);
+      transform: translateY(-2px);
+    }
+
+    /* ──────────────────────────────────────────
+       FOOTER
+    ────────────────────────────────────────── */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 28px 0;
+      text-align: center;
+    }
+    footer p {
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+    footer span { color: var(--accent); }
+
+    /* ──────────────────────────────────────────
+       RESPONSIVE
+    ────────────────────────────────────────── */
+    @media (max-width: 768px) {
+      section { padding: 70px 0; }
+
+      .nav-links { display: none; }
+
+      .about-grid { grid-template-columns: 1fr; gap: 48px; }
+      .about-photo-wrap { max-width: 320px; margin: 0 auto; }
+
+      .portfolio-header { flex-direction: column; align-items: flex-start; gap: 20px; }
+      .portfolio-filter { flex-wrap: wrap; }
+
+      .about-stats { gap: 16px; }
+
+      .hero-title { font-size: clamp(36px, 10vw, 56px); }
+    }
+
+    /* ──────────────────────────────────────────
+       REVEAL ANIMATION
+    ────────────────────────────────────────── */
+    .reveal {
+      opacity: 0;
+      transform: translateY(24px);
+      transition: opacity 0.6s ease, transform 0.6s ease;
+    }
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  </style>
+</head>
+<body>
+
+<!-- ════════════════════════ NAV ════════════════════════ -->
+<nav id="navbar">
+  <div class="container nav-inner">
+    <a href="#hero" class="nav-logo">YN<span>.</span></a>
+    <ul class="nav-links">
+      <li><a href="#about">About</a></li>
+      <li><a href="#skills">Skills</a></li>
+      <li><a href="#portfolio">Portfolio</a></li>
+      <li><a href="#experience">Experience</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+    <a href="mailto:your@email.com" class="nav-cta">이메일 보내기</a>
+  </div>
+</nav>
+
+<!-- ════════════════════════ HERO ════════════════════════ -->
+<section id="hero">
+  <div class="container">
+    <div class="hero-content">
+      <p class="hero-eyebrow">Frontend Developer Based in Seoul</p>
+      <h1 class="hero-title">
+        <span class="name">Your Name</span><br/>
+        <span class="role">을 소개합니다</span><span class="cursor"></span>
+      </h1>
+      <p class="hero-desc">
+        사용자 경험을 최우선으로 생각하는 프론트엔드 개발자입니다.
+        깔끔한 코드와 섬세한 인터랙션으로 아이디어를 현실로 만듭니다.
+      </p>
+      <div class="hero-actions">
+        <a href="#portfolio" class="btn-primary">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+          포트폴리오 보기
+        </a>
+        <a href="resume.pdf" class="btn-secondary" download>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          이력서 다운로드
+        </a>
+      </div>
+    </div>
+  </div>
+  <div class="scroll-hint">
+    <div class="scroll-line"></div>
+    scroll
+  </div>
+</section>
+
+<!-- ════════════════════════ ABOUT ════════════════════════ -->
+<section id="about">
+  <div class="container">
+    <div class="about-grid">
+      <!-- 사진 영역: src를 본인 사진으로 교체 -->
+      <div class="about-photo-wrap reveal">
+        <div class="about-photo">
+          <!-- <img src="images/profile.jpg" alt="Profile Photo" /> -->
+          <div class="photo-placeholder">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1">
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
+            </svg>
+            profile.jpg 교체
+          </div>
+        </div>
+      </div>
+
+      <div class="about-text reveal">
+        <p class="section-label">About Me</p>
+        <h2 class="section-title">코드로 경험을<br/>디자인합니다</h2>
+        <p class="about-desc">
+          안녕하세요! 프론트엔드 개발자 [Your Name]입니다.
+          HTML, CSS, JavaScript를 기반으로 React와 Vue를 활용해
+          반응형 웹 애플리케이션을 개발합니다.<br/><br/>
+          퍼포먼스 최적화와 접근성을 중요하게 생각하며,
+          백엔드(Spring, Node.js)와의 협업 경험도 보유하고 있습니다.
+          새로운 기술을 배우는 것을 즐기며 팀과 함께 성장하는 개발자입니다.
+        </p>
+        <div class="about-stats">
+          <div class="stat">
+            <div class="stat-num">0+</div><!-- 숫자 교체 -->
+            <div class="stat-label">프로젝트</div>
+          </div>
+          <div class="stat">
+            <div class="stat-num">0+</div>
+            <div class="stat-label">커밋</div>
+          </div>
+          <div class="stat">
+            <div class="stat-num">0+</div>
+            <div class="stat-label">협업 경험</div>
+          </div>
+        </div>
+        <div class="about-links">
+          <a href="https://github.com/yourusername" class="link-chip" target="_blank">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.3 3.44 9.8 8.2 11.38.6.11.82-.26.82-.58v-2.03c-3.34.73-4.04-1.61-4.04-1.61-.54-1.38-1.33-1.75-1.33-1.75-1.08-.74.08-.73.08-.73 1.2.09 1.83 1.23 1.83 1.23 1.06 1.82 2.78 1.3 3.46.99.11-.77.42-1.3.76-1.6-2.67-.3-5.47-1.33-5.47-5.93 0-1.31.47-2.38 1.24-3.22-.13-.3-.54-1.52.12-3.18 0 0 1.01-.32 3.3 1.23.96-.27 1.98-.4 3-.41 1.02.01 2.04.14 3 .41 2.28-1.55 3.29-1.23 3.29-1.23.66 1.66.25 2.88.12 3.18.77.84 1.23 1.91 1.23 3.22 0 4.61-2.81 5.63-5.48 5.92.43.37.81 1.1.81 2.22v3.29c0 .32.22.7.82.58C20.56 21.8 24 17.3 24 12c0-6.63-5.37-12-12-12z"/></svg>
+            GitHub
+          </a>
+          <a href="https://linkedin.com/in/yourusername" class="link-chip" target="_blank">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M20.45 20.45h-3.55v-5.57c0-1.33-.03-3.04-1.85-3.04-1.85 0-2.13 1.45-2.13 2.94v5.67H9.37V9h3.41v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.45v6.29zM5.34 7.43a2.06 2.06 0 1 1 0-4.12 2.06 2.06 0 0 1 0 4.12zM7.12 20.45H3.56V9h3.56v11.45zM22.22 0H1.77C.79 0 0 .77 0 1.72v20.56C0 23.23.79 24 1.77 24h20.45c.98 0 1.78-.77 1.78-1.72V1.72C24 .77 23.2 0 22.22 0z"/></svg>
+            LinkedIn
+          </a>
+          <a href="mailto:your@email.com" class="link-chip">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+            Email
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════ SKILLS ════════════════════════ -->
+<section id="skills">
+  <div class="container">
+    <p class="section-label">What I Work With</p>
+    <h2 class="section-title">기술 스택</h2>
+
+    <div class="skills-grid">
+      <!-- FRONTEND -->
+      <div class="skill-group reveal">
+        <h3>Frontend</h3>
+        <div class="skill-item">
+          <div class="skill-meta">
+            <span class="skill-name">HTML / CSS</span>
+            <span class="skill-pct">90%</span>
+          </div>
+          <div class="skill-bar"><div class="skill-fill" data-width="90"></div></div>
+        </div>
+        <div class="skill-item">
+          <div class="skill-meta">
+            <span class="skill-name">JavaScript</span>
+            <span class="skill-pct">80%</span>
+          </div>
+          <div class="skill-bar"><div class="skill-fill" data-width="80"></div></div>
+        </div>
+        <div class="skill-item">
+          <div class="skill-meta">
+            <span class="skill-name">React</span>
+            <span class="skill-pct">75%</span>
+          </div>
+          <div class="skill-bar"><div class="skill-fill" data-width="75"></div></div>
+        </div>
+        <div class="skill-item">
+          <div class="skill-meta">
+            <span class="skill-name">Vue.js</span>
+            <span class="skill-pct">65%</span>
+          </div>
+          <div class="skill-bar"><div class="skill-fill" data-width="65"></div></div>
+        </div>
+      </div>
+
+      <!-- BACKEND / INFRA -->
+      <div class="skill-group reveal">
+        <h3>Backend / Infra</h3>
+        <div class="skill-item">
+          <div class="skill-meta">
+            <span class="skill-name">Spring MVC / Boot</span>
+            <span class="skill-pct">70%</span>
+          </div>
+          <div class="skill-bar"><div class="skill-fill" data-width="70"></div></div>
+        </div>
+        <div class="skill-item">
+          <div class="skill-meta">
+            <span class="skill-name">Node.js / Express</span>
+            <span class="skill-pct">60%</span>
+          </div>
+          <div class="skill-bar"><div class="skill-fill" data-width="60"></div></div>
+        </div>
+        <div class="skill-item">
+          <div class="skill-meta">
+            <span class="skill-name">MySQL / MyBatis</span>
+            <span class="skill-pct">65%</span>
+          </div>
+          <div class="skill-bar"><div class="skill-fill" data-width="65"></div></div>
+        </div>
+        <div class="skill-item">
+          <div class="skill-meta">
+            <span class="skill-name">Git / GitHub</span>
+            <span class="skill-pct">80%</span>
+          </div>
+          <div class="skill-bar"><div class="skill-fill" data-width="80"></div></div>
+        </div>
+      </div>
+
+      <!-- TOOLS & ETC -->
+      <div class="skill-group reveal">
+        <h3>Tools &amp; Etc.</h3>
+        <div class="tech-tags">
+          <span class="tag">Figma</span>
+          <span class="tag">VS Code</span>
+          <span class="tag">Webpack</span>
+          <span class="tag">Vite</span>
+          <span class="tag">Docker</span>
+          <span class="tag">Linux</span>
+          <span class="tag">REST API</span>
+          <span class="tag">Tailwind CSS</span>
+          <span class="tag">jQuery</span>
+          <span class="tag">Axios</span>
+          <span class="tag">Jest</span>
+          <!-- 필요 시 태그 추가/삭제 -->
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════ PORTFOLIO ════════════════════════ -->
+<section id="portfolio">
+  <div class="container">
+    <div class="portfolio-header">
+      <div>
+        <p class="section-label">Selected Work</p>
+        <h2 class="section-title">포트폴리오</h2>
+      </div>
+      <div class="portfolio-filter">
+        <button class="filter-btn active" data-filter="all">All</button>
+        <button class="filter-btn" data-filter="web">Web</button>
+        <button class="filter-btn" data-filter="app">App</button>
+        <button class="filter-btn" data-filter="ai">AI</button>
+      </div>
+    </div>
+
+    <div class="portfolio-grid">
+
+      <!-- ── CARD 1 ── 복사해서 추가 -->
+      <div class="card reveal" data-category="web">
+        <div class="card-thumb">
+          <!-- <img src="images/project1.jpg" alt="Project 1" /> -->
+          <div class="thumb-placeholder">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18"/><path d="M9 21V9"/></svg>
+            project1.jpg 교체
+          </div>
+          <div class="card-overlay">
+            <a href="#" class="overlay-btn primary" target="_blank">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+              Live
+            </a>
+            <a href="#" class="overlay-btn secondary" target="_blank">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.3 3.44 9.8 8.2 11.38.6.11.82-.26.82-.58v-2.03c-3.34.73-4.04-1.61-4.04-1.61-.54-1.38-1.33-1.75-1.33-1.75-1.08-.74.08-.73.08-.73 1.2.09 1.83 1.23 1.83 1.23 1.06 1.82 2.78 1.3 3.46.99.11-.77.42-1.3.76-1.6-2.67-.3-5.47-1.33-5.47-5.93 0-1.31.47-2.38 1.24-3.22-.13-.3-.54-1.52.12-3.18 0 0 1.01-.32 3.3 1.23.96-.27 1.98-.4 3-.41 1.02.01 2.04.14 3 .41 2.28-1.55 3.29-1.23 3.29-1.23.66 1.66.25 2.88.12 3.18.77.84 1.23 1.91 1.23 3.22 0 4.61-2.81 5.63-5.48 5.92.43.37.81 1.1.81 2.22v3.29c0 .32.22.7.82.58C20.56 21.8 24 17.3 24 12c0-6.63-5.37-12-12-12z"/></svg>
+              GitHub
+            </a>
+          </div>
+        </div>
+        <div class="card-body">
+          <p class="card-category">Web</p>
+          <h3 class="card-title">프로젝트 제목 1</h3>
+          <p class="card-desc">프로젝트에 대한 간략한 설명을 작성해 주세요. 어떤 문제를 해결했는지, 어떤 기술을 사용했는지 짧게 서술합니다.</p>
+          <div class="card-tags">
+            <span class="card-tag">React</span>
+            <span class="card-tag">TypeScript</span>
+            <span class="card-tag">Tailwind</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── CARD 2 ── -->
+      <div class="card reveal" data-category="web">
+        <div class="card-thumb">
+          <div class="thumb-placeholder">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18"/><path d="M9 21V9"/></svg>
+            project2.jpg 교체
+          </div>
+          <div class="card-overlay">
+            <a href="#" class="overlay-btn primary" target="_blank">Live</a>
+            <a href="#" class="overlay-btn secondary" target="_blank">GitHub</a>
+          </div>
+        </div>
+        <div class="card-body">
+          <p class="card-category">Web</p>
+          <h3 class="card-title">프로젝트 제목 2</h3>
+          <p class="card-desc">프로젝트에 대한 간략한 설명을 작성해 주세요.</p>
+          <div class="card-tags">
+            <span class="card-tag">Vue.js</span>
+            <span class="card-tag">Spring Boot</span>
+            <span class="card-tag">MySQL</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── CARD 3 ── -->
+      <div class="card reveal" data-category="ai">
+        <div class="card-thumb">
+          <div class="thumb-placeholder">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18"/><path d="M9 21V9"/></svg>
+            project3.jpg 교체
+          </div>
+          <div class="card-overlay">
+            <a href="#" class="overlay-btn primary" target="_blank">Live</a>
+            <a href="#" class="overlay-btn secondary" target="_blank">GitHub</a>
+          </div>
+        </div>
+        <div class="card-body">
+          <p class="card-category">AI</p>
+          <h3 class="card-title">프로젝트 제목 3</h3>
+          <p class="card-desc">프로젝트에 대한 간략한 설명을 작성해 주세요.</p>
+          <div class="card-tags">
+            <span class="card-tag">Python</span>
+            <span class="card-tag">FastAPI</span>
+            <span class="card-tag">OpenSearch</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── CARD 4 ── -->
+      <div class="card reveal" data-category="app">
+        <div class="card-thumb">
+          <div class="thumb-placeholder">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18"/><path d="M9 21V9"/></svg>
+            project4.jpg 교체
+          </div>
+          <div class="card-overlay">
+            <a href="#" class="overlay-btn primary" target="_blank">Live</a>
+            <a href="#" class="overlay-btn secondary" target="_blank">GitHub</a>
+          </div>
+        </div>
+        <div class="card-body">
+          <p class="card-category">App</p>
+          <h3 class="card-title">프로젝트 제목 4</h3>
+          <p class="card-desc">프로젝트에 대한 간략한 설명을 작성해 주세요.</p>
+          <div class="card-tags">
+            <span class="card-tag">JavaScript</span>
+            <span class="card-tag">Node.js</span>
+            <span class="card-tag">MongoDB</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── CARD 5 ── -->
+      <div class="card reveal" data-category="web">
+        <div class="card-thumb">
+          <div class="thumb-placeholder">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18"/><path d="M9 21V9"/></svg>
+            project5.jpg 교체
+          </div>
+          <div class="card-overlay">
+            <a href="#" class="overlay-btn primary" target="_blank">Live</a>
+            <a href="#" class="overlay-btn secondary" target="_blank">GitHub</a>
+          </div>
+        </div>
+        <div class="card-body">
+          <p class="card-category">Web</p>
+          <h3 class="card-title">프로젝트 제목 5</h3>
+          <p class="card-desc">프로젝트에 대한 간략한 설명을 작성해 주세요.</p>
+          <div class="card-tags">
+            <span class="card-tag">HTML/CSS</span>
+            <span class="card-tag">jQuery</span>
+            <span class="card-tag">Spring MVC</span>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /portfolio-grid -->
+  </div>
+</section>
+
+<!-- ════════════════════════ EXPERIENCE ════════════════════════ -->
+<section id="experience">
+  <div class="container">
+    <p class="section-label">Career</p>
+    <h2 class="section-title">경력 사항</h2>
+
+    <div class="timeline">
+      <div class="timeline-item reveal">
+        <p class="timeline-date">2024.00 — 현재</p>
+        <h3 class="timeline-role">Frontend Developer</h3>
+        <p class="timeline-company">회사명 / 팀명</p>
+        <p class="timeline-desc">주요 담당 업무와 기여한 내용을 간결하게 서술합니다. 사용 기술 스택과 성과 지표를 포함하면 좋습니다.</p>
+      </div>
+      <div class="timeline-item reveal">
+        <p class="timeline-date">2023.00 — 2024.00</p>
+        <h3 class="timeline-role">Web Developer Intern</h3>
+        <p class="timeline-company">회사명 / 팀명</p>
+        <p class="timeline-desc">주요 담당 업무와 기여한 내용을 간결하게 서술합니다.</p>
+      </div>
+      <div class="timeline-item reveal">
+        <p class="timeline-date">2023.00</p>
+        <h3 class="timeline-role">○○ 학과 졸업</h3>
+        <p class="timeline-company">학교명</p>
+        <p class="timeline-desc">전공, 부전공, 관련 수상 이력 등을 기재합니다.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════ CONTACT ════════════════════════ -->
+<section id="contact">
+  <div class="container">
+    <div class="contact-inner">
+      <p class="section-label">Get In Touch</p>
+      <h2 class="section-title">함께 만들어요</h2>
+      <p class="contact-desc">
+        새로운 프로젝트, 협업 제안, 또는 가볍게 커피 한 잔 하며 이야기 나누고 싶다면 언제든지 연락 주세요.
+      </p>
+      <div class="contact-actions">
+        <a href="mailto:your@email.com" class="btn-primary">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+          이메일 보내기
+        </a>
+        <a href="resume.pdf" class="btn-secondary" download>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          이력서 PDF
+        </a>
+      </div>
+      <div class="social-row">
+        <!-- GitHub -->
+        <a href="https://github.com/yourusername" class="social-link" target="_blank" aria-label="GitHub">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.3 3.44 9.8 8.2 11.38.6.11.82-.26.82-.58v-2.03c-3.34.73-4.04-1.61-4.04-1.61-.54-1.38-1.33-1.75-1.33-1.75-1.08-.74.08-.73.08-.73 1.2.09 1.83 1.23 1.83 1.23 1.06 1.82 2.78 1.3 3.46.99.11-.77.42-1.3.76-1.6-2.67-.3-5.47-1.33-5.47-5.93 0-1.31.47-2.38 1.24-3.22-.13-.3-.54-1.52.12-3.18 0 0 1.01-.32 3.3 1.23.96-.27 1.98-.4 3-.41 1.02.01 2.04.14 3 .41 2.28-1.55 3.29-1.23 3.29-1.23.66 1.66.25 2.88.12 3.18.77.84 1.23 1.91 1.23 3.22 0 4.61-2.81 5.63-5.48 5.92.43.37.81 1.1.81 2.22v3.29c0 .32.22.7.82.58C20.56 21.8 24 17.3 24 12c0-6.63-5.37-12-12-12z"/></svg>
+        </a>
+        <!-- LinkedIn -->
+        <a href="https://linkedin.com/in/yourusername" class="social-link" target="_blank" aria-label="LinkedIn">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M20.45 20.45h-3.55v-5.57c0-1.33-.03-3.04-1.85-3.04-1.85 0-2.13 1.45-2.13 2.94v5.67H9.37V9h3.41v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.45v6.29zM5.34 7.43a2.06 2.06 0 1 1 0-4.12 2.06 2.06 0 0 1 0 4.12zM7.12 20.45H3.56V9h3.56v11.45zM22.22 0H1.77C.79 0 0 .77 0 1.72v20.56C0 23.23.79 24 1.77 24h20.45c.98 0 1.78-.77 1.78-1.72V1.72C24 .77 23.2 0 22.22 0z"/></svg>
+        </a>
+        <!-- Velog / Blog -->
+        <a href="https://velog.io/@yourusername" class="social-link" target="_blank" aria-label="Velog">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 3h20v14H2z"/><path d="M8 21h8M12 17v4"/></svg>
+        </a>
+        <!-- Notion -->
+        <a href="#" class="social-link" target="_blank" aria-label="Notion">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M4.459 4.208c.746.606 1.026.56 2.428.466l13.215-.793c.28 0 .047-.28-.046-.326L17.86 1.968c-.42-.326-.981-.7-2.055-.607L3.01 2.295c-.466.046-.56.28-.374.466zm.793 3.08v13.904c0 .747.373 1.027 1.214.98l14.523-.84c.841-.046.935-.56.935-1.167V6.354c0-.606-.233-.933-.748-.887l-15.177.887c-.56.047-.747.327-.747.933zm14.337.745c.093.42 0 .84-.42.888l-.7.14v10.264c-.608.327-1.168.514-1.635.514-.748 0-.935-.234-1.495-.933l-4.577-7.186v6.952L12.21 19s0 .84-1.168.84l-3.222.186c-.093-.186 0-.653.327-.746l.84-.233V9.854L7.822 9.76c-.094-.42.14-1.026.793-1.073l3.456-.233 4.764 7.279v-6.44l-1.215-.14c-.093-.514.28-.887.747-.933zM1.936 1.035l13.31-.98c1.634-.14 2.055-.047 3.082.7l4.249 2.986c.7.513.934.653.934 1.213v16.378c0 1.026-.373 1.634-1.68 1.726l-15.458.934c-.98.047-1.448-.093-1.962-.747l-3.129-4.06c-.56-.747-.793-1.306-.793-1.96V2.667c0-.839.374-1.54 1.447-1.632z"/></svg>
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════ FOOTER ════════════════════════ -->
+<footer>
+  <div class="container">
+    <p>Designed &amp; Built by <span>Your Name</span> · <span id="year"></span></p>
+  </div>
+</footer>
+
+<!-- ════════════════════════ SCRIPTS ════════════════════════ -->
+<script>
+  /* ── 연도 자동 ── */
+  document.getElementById('year').textContent = new Date().getFullYear();
+
+  /* ── 스크롤 시 nav 배경 ── */
+  const navbar = document.getElementById('navbar');
+  window.addEventListener('scroll', () => {
+    navbar.classList.toggle('scrolled', window.scrollY > 40);
+  });
+
+  /* ── Intersection Observer: reveal + skill bar ── */
+  const revealEls = document.querySelectorAll('.reveal');
+  const skillFills = document.querySelectorAll('.skill-fill');
+
+  const obs = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (!entry.isIntersecting) return;
+      entry.target.classList.add('visible');
+      obs.unobserve(entry.target);
+    });
+  }, { threshold: 0.12 });
+
+  revealEls.forEach(el => obs.observe(el));
+
+  /* skill bar 애니메이션 */
+  const skillObs = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (!entry.isIntersecting) return;
+      const target = entry.target;
+      const width = target.dataset.width;
+      target.style.width = width + '%';
+      skillObs.unobserve(target);
+    });
+  }, { threshold: 0.3 });
+
+  skillFills.forEach(el => skillObs.observe(el));
+
+  /* ── Portfolio filter ── */
+  const filterBtns = document.querySelectorAll('.filter-btn');
+  const cards = document.querySelectorAll('.portfolio-grid .card');
+
+  filterBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      filterBtns.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+
+      const filter = btn.dataset.filter;
+      cards.forEach(card => {
+        const match = filter === 'all' || card.dataset.category === filter;
+        card.style.display = match ? 'flex' : 'none';
+      });
+    });
+  });
+</script>
+</body>
+</html>
